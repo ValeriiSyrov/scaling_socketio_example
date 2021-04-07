@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+  socket-node1:
+    build: # build a image from a dockerfile
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /home/multiple_socket
+    environment:
+        - APPID=1111
+        - PORT=3001
+    volumes:
+      - .:/home/multiple_socket
+    container_name: socket-node1
+    command: npm run start
+  socket-node2:
+    build: # build a image from a dockerfile
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /home/multiple_socket
+    environment:
+            - APPID=2222
+            - PORT=3002
+    volumes:
+      - .:/home/multiple_socket
+    container_name: socket-node2
+    command: npm run start
+  nginx:
+    build:
+        context: ./nginx
+    depends_on:
+     - socket-node1
+     - socket-node2
+    ports:
+      - 3005:3005
+  redis:
+        image: redis
